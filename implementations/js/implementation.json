@@ -1,0 +1,26 @@
+{
+    "type": "implementation",
+    "short-name":"js",
+    "description":"JavaScript port of C implementation",
+    "language":"js",
+    "core-source-files":[
+    ],
+    "runner-source-file": { "file": "./bfs.js" },
+    "runner-arguments": [
+        { "expand": "/experiment/input-size" },
+         {
+            "prefix":"--max-old-space-size=4096 ",
+            "value": { 
+                "expand": "/experiment/input-size"
+            }
+        }
+    ],
+    "environment":{
+        "node":{
+
+        }
+     },
+    "libraries":[
+        { "suite-root": "/implementations/js/common_rand.js" }
+    ]
+}
