@@ -15,5 +15,15 @@
     ],
     "include-directories":[
         {"suite-root": "/implementations/cpp/"}
+    ],
+     "dependencies": [
+        {
+            "source": "https://github.com/Sable/ostrich-c-implementation-common.git",
+            "destination": "./common"
+        },
+          {
+            "source": "https://github.com/Sable/ostrich-c-implementation-common.git",
+            "destination": "./common"
+        }
     ]
 }
