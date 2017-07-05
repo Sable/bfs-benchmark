@@ -23,7 +23,7 @@
         },
           {
             "source": "https://github.com/Sable/spmv-benchmark.git",
-            "destination": "./spmv-trial"
+            "destination": "./common"
         }
     ]
 }
