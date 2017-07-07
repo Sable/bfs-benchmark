@@ -10,11 +10,11 @@
         { "expand": "/experiment/input-size" }
     ],
     "libraries":[
-        { "suite-root": "/implementations/cpp/common_rand.cpp"},
-        { "suite-root": "/implementations/cpp/common.cpp"}
+        { "file": "./common/common_rand.cpp"},
+        { "file": "./common/common.cpp"}
     ],
     "include-directories":[
-        {"suite-root": "/implementations/cpp/"}
+        {"file": "./common"}
     ],
      "dependencies": [
         {
