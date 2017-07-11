@@ -7,8 +7,12 @@
     "input-size":{
         "small": 3000,
         "medium": 3000000,
-        "large": 30000000 
+        "large": 15000000 
     },
-    "random-seed":1337,
+    "expected-output": {
+        "small": 13234,
+        "medium": 26321966,
+        "large": 139771334
+    },
     "dwarf": "graph traversal"
 }

@@ -36,26 +36,83 @@ struct edge {
     unsigned weight;
 };
 
-void BFSGraph(int argc, char** argv);
 void InitializeGraph(Node**, bool**, bool**, bool**, int**, int**, int, char*, char*);
 
 void Usage(char**argv) {
     fprintf(stdout,"Usage: %s <num_nodes> [<vertices_file_path> <edges_file_path> <cost_file_path>]\n", argv[0]);
 }
-////////////////////////////////////////////////////////////////////////////////
-// Main Program
-////////////////////////////////////////////////////////////////////////////////
-int main( int argc, char** argv) {
-    BFSGraph( argc, argv );
-    return 0;
+
+void InitializeGraph(
+    Node **h_graph_nodes,
+    bool **h_graph_mask,
+    bool **h_updating_graph_mask,
+    bool **h_graph_visited,
+    int  **h_graph_edges,
+    int  **h_cost,
+    int numNodes,
+    char  *vertice_file_path,
+    char  *edge_file_path) {
+
+    node *graph = new node[numNodes];
+    int source = 0;
+    unsigned numEdges;
+    unsigned long nodeID;
+    unsigned weight;
+
+    *h_graph_nodes = (Node*) malloc(sizeof(Node)*numNodes);
+    *h_graph_mask = (bool*) malloc(sizeof(bool)*numNodes);
+    *h_updating_graph_mask = (bool*) malloc(sizeof(bool)*numNodes);
+    *h_graph_visited = (bool*) malloc(sizeof(bool)*numNodes);
+    *h_cost = (int*) malloc(sizeof(int)*numNodes);
+
+    for (int i = 0; i < numNodes; ++i) {
+        numEdges = abs(common_rand() % ( MAX_INIT_EDGES - MIN_EDGES + 1 )) + MIN_EDGES;
+        for ( unsigned j = 0; j < numEdges; j++ ) {
+            nodeID = abs(common_rand() % numNodes);
+            weight = abs(common_rand() % ( MAX_WEIGHT - MIN_WEIGHT + 1 )) + MIN_WEIGHT;
+            graph[i].push_back( edge() );
+            graph[i].back().dest = nodeID;
+            graph[i].back().weight = weight;
+            graph[nodeID].push_back( edge() );
+            graph[nodeID].back().dest = i;
+            graph[nodeID].back().weight = weight;
+        }
+    }
+
+    unsigned long totalEdges = 0;
+    for (int i = 0; i < numNodes; ++i) {
+        unsigned long numEdges = graph[i].size();
+        (*h_graph_nodes)[i].starting = totalEdges;
+        (*h_graph_nodes)[i].no_of_edges = numEdges;
+        (*h_graph_mask)[i] = false;
+        (*h_updating_graph_mask)[i] = false;
+        (*h_graph_visited)[i] = false;
+
+        totalEdges += numEdges;
+    }
+
+    *h_graph_edges = (int*) malloc(sizeof(int)*totalEdges);
+
+
+    (*h_graph_mask)[source] = true;
+    (*h_graph_visited)[source] = true;
+
+    unsigned k = 0;
+    for ( unsigned long i = 0; i < numNodes; i++ ) {
+        for ( unsigned j = 0; j < graph[i].size(); j++ ) {
+            (*h_graph_edges)[k] = graph[i][j].dest;
+            ++k;
+        }
+    }
+
+    for(int i = 0; i < numNodes; ++i) {
+        (*h_cost)[i] = -1;
+    }
+    (*h_cost)[source] = 0;
 }
 
 
-
-////////////////////////////////////////////////////////////////////////////////
-//Apply BFS on a Graph using CUDA
-////////////////////////////////////////////////////////////////////////////////
-void BFSGraph( int argc, char** argv) {
+int main( int argc, char** argv) {
     char *vertice_file_path = NULL;
     char *edge_file_path = NULL;
     char *cost_file_path = NULL;
@@ -172,120 +229,8 @@ void BFSGraph( int argc, char** argv) {
     free(h_graph_visited);
     free(h_cost);
 
-    fprintf(stdout, "{\"options\": \"%d\", \"time\": %f, \"status\": %d}\n", no_of_nodes, get_interval_by_sec(&sw1), 1);
+    fprintf(stdout, "{\"options\": \"%d\", \"time\": %f, \"status\": %d, \"output\": %lu }\n", no_of_nodes, get_interval_by_sec(&sw1), 1, total_cost);
+    return 0;
 }
 
 
-// TODO(vfoley): this should be moved into a different program that is run
-// once before all benchmarks.
-void InitializeGraph(
-    Node **h_graph_nodes,
-    bool **h_graph_mask,
-    bool **h_updating_graph_mask,
-    bool **h_graph_visited,
-    int  **h_graph_edges,
-    int  **h_cost,
-    int numNodes,
-    char  *vertice_file_path,
-    char  *edge_file_path) {
-
-    node *graph = new node[numNodes];
-    int source = 0;
-    unsigned numEdges;
-    unsigned long nodeID;
-    unsigned weight;
-
-    *h_graph_nodes = (Node*) malloc(sizeof(Node)*numNodes);
-    *h_graph_mask = (bool*) malloc(sizeof(bool)*numNodes);
-    *h_updating_graph_mask = (bool*) malloc(sizeof(bool)*numNodes);
-    *h_graph_visited = (bool*) malloc(sizeof(bool)*numNodes);
-    *h_cost = (int*) malloc(sizeof(int)*numNodes);
-
-    for (int i = 0; i < numNodes; ++i) {
-        numEdges = abs(common_rand() % ( MAX_INIT_EDGES - MIN_EDGES + 1 )) + MIN_EDGES;
-        for ( unsigned j = 0; j < numEdges; j++ ) {
-            nodeID = abs(common_rand() % numNodes);
-            weight = abs(common_rand() % ( MAX_WEIGHT - MIN_WEIGHT + 1 )) + MIN_WEIGHT;
-            graph[i].push_back( edge() );
-            graph[i].back().dest = nodeID;
-            graph[i].back().weight = weight;
-            graph[nodeID].push_back( edge() );
-            graph[nodeID].back().dest = i;
-            graph[nodeID].back().weight = weight;
-        }
-    }
-
-    unsigned long totalEdges = 0;
-    for (int i = 0; i < numNodes; ++i) {
-        unsigned long numEdges = graph[i].size();
-        (*h_graph_nodes)[i].starting = totalEdges;
-        (*h_graph_nodes)[i].no_of_edges = numEdges;
-        (*h_graph_mask)[i] = false;
-        (*h_updating_graph_mask)[i] = false;
-        (*h_graph_visited)[i] = false;
-
-        totalEdges += numEdges;
-    }
-
-    *h_graph_edges = (int*) malloc(sizeof(int)*totalEdges);
-
-
-    (*h_graph_mask)[source] = true;
-    (*h_graph_visited)[source] = true;
-
-    unsigned k = 0;
-    for ( unsigned long i = 0; i < numNodes; i++ ) {
-        for ( unsigned j = 0; j < graph[i].size(); j++ ) {
-            (*h_graph_edges)[k] = graph[i][j].dest;
-            ++k;
-        }
-    }
-
-    for(int i = 0; i < numNodes; ++i) {
-        (*h_cost)[i] = -1;
-    }
-    (*h_cost)[source] = 0;
-
-    // Save all data structures to disk
-    if (access("/tmp/h_graph_nodes.csv", F_OK) == -1) {
-	FILE *graph_nodes_fd = fopen("/tmp/h_graph_nodes.csv", "w");
-	FILE *graph_mask_fd = fopen("/tmp/h_graph_mask.csv", "w");
-	FILE *updating_graph_mask_fd = fopen("/tmp/h_updating_graph_mask.csv", "w");
-	FILE *graph_visited_fd = fopen("/tmp/h_graph_visited.csv", "w");
-	FILE *cost_fd = fopen("/tmp/h_cost.csv", "w");
-	for (int i = 0; i < numNodes; ++i) {
-	    fprintf(graph_nodes_fd, "%d,%d\n", (*h_graph_nodes)[i].starting, (*h_graph_nodes)[i].no_of_edges);
-	    fprintf(graph_mask_fd, "%d\n", (*h_graph_mask)[i]);
-	    fprintf(updating_graph_mask_fd, "%d\n", (*h_updating_graph_mask)[i]);
-	    fprintf(graph_visited_fd, "%d\n", (*h_graph_visited)[i]);
-	    fprintf(cost_fd, "%d\n", (*h_cost)[i]);
-	}
-	fclose(graph_nodes_fd);
-	fclose(graph_mask_fd);
-	fclose(updating_graph_mask_fd);
-	fclose(graph_visited_fd);
-	fclose(cost_fd);
-
-	FILE *graph_edges_fd = fopen("/tmp/h_graph_edges.csv", "w");
-	for (int i = 0; i < totalEdges; ++i) {
-	    fprintf(graph_edges_fd, "%d\n", (*h_graph_edges)[i]);
-	}
-	fclose(graph_edges_fd);
-    }
-
-    delete[] graph;
-
-    if (vertice_file_path != NULL && edge_file_path != NULL) {
-        FILE *fp = fopen(vertice_file_path, "w");
-        for (int i=0; i<numNodes; ++i) {
-            fprintf(fp, "%d,%d\n", (*h_graph_nodes)[i].starting, (*h_graph_nodes)[i].no_of_edges);
-        }
-        fclose(fp);
-
-        fp = fopen(edge_file_path, "w");
-        for (int i=0; i<totalEdges; ++i) {
-            fprintf(fp, "%d\n", (*h_graph_edges)[i]);
-        }
-        fclose(fp);
-    }
-}
