@@ -7,20 +7,15 @@
     ],
     "runner-source-file": { "file": "./bfs.js" },
     "runner-arguments": [
-        { "expand": "/experiment/input-size" },
-         {
-            "prefix":"--max-old-space-size=4096 ",
-            "value": { 
-                "expand": "/experiment/input-size"
-            }
-        }
+        { "expand": "/experiment/input-size" }
     ],
-    "environment":{
-        "node":{
-
-        }
-     },
     "libraries":[
-        { "suite-root": "/implementations/js/common_rand.js" }
+        { "file": "./common/common_rand.js" }
+    ],
+    "dependencies":[
+        {
+            "source": "https://github.com/Sable/ostrich-js-implementation-common.git",
+            "destination": "./common"
+        }
     ]
 }

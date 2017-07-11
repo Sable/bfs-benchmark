@@ -126,13 +126,6 @@ function BFSGraph(no_of_nodes, verbose) {
     for (var i=0; i<no_of_nodes; ++i) {
         total_cost += h_cost[i];
     }
-    if (no_of_nodes == expected_no_of_nodes) {
-        if (total_cost != expected_total_cost) {
-            throw new Error("ERROR: the total cost obtained for '" + no_of_nodes + "' nodes is '" + total_cost + "' while the expected cost is '" + expected_total_cost + "'");
-        }
-    } else {
-        console.log("WARNING: no self-checking step for '" + no_of_nodes + "' nodes, only valid for '" + expected_no_of_nodes + "' nodes");
-    }
 
     console.log("Init time     : " + (init_time/1000) + " s");
     console.log("Traversal time: " + (traversal_time/1000) + " s");
@@ -145,6 +138,7 @@ function BFSGraph(no_of_nodes, verbose) {
 
     return { status: 1,
              options: "BFSGraph(" + no_of_nodes + ")",
+             output: total_cost,
              time: traversal_time / 1000 };
 }
 
@@ -217,4 +211,9 @@ function InitializeGraph(no_of_nodes) {
 
 function runner(nbNodes) {
     console.log(JSON.stringify(BFSGraph(nbNodes)));
+}
+
+if (typeof exports !== 'undefined') {
+  exports.runner = runner;
+  exports.InitializeGraph = InitializeGraph;
 }
