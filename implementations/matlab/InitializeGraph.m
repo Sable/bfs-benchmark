@@ -19,20 +19,22 @@ function [h_graph_nodes, h_graph_mask, h_updating_graph_mask, h_graph_visited, h
 
   source = 1;
   graph = {};
-  for i = 1:no_of_nodes
-    graph{i} = {};
-  end
+
+  random_no_of_edges = abs(mod(createMatrixRand(no_of_nodes,1), MAX_INIT_EDGES - MIN_EDGES + 1)) + MIN_EDGES;
 
   for i = 1:no_of_nodes
-    no_of_edges = abs(mod(commonRandom(), MAX_INIT_EDGES - MIN_EDGES + 1)) + MIN_EDGES;
-    for j = 1:no_of_edges
-      node_id = abs(mod(commonRandom(), no_of_nodes)) + 1;
-      weight = abs(mod(commonRandom(), (MAX_WEIGHT - MIN_WEIGHT + 1))) + MIN_WEIGHT;
-
-      graph{i}{end+1} = edge(node_id, weight);
-      graph{node_id}{end+1} = edge(i, weight);
-    end
+      graph{i} = {};
   end
+  for i = 1:no_of_nodes
+      no_of_edges = random_no_of_edges(i);
+      node_ids = abs(mod(createMatrixRand(no_of_edges,1), no_of_nodes)) + 1;
+      weights = abs(mod(createMatrixRand(no_of_edges,1), MAX_WEIGHT - MIN_WEIGHT + 1)) + MIN_WEIGHT;
+      for j = 1:no_of_edges
+        graph{i}{end+1} = edge(node_ids(j), weights(j));
+        graph{node_ids(j)}{end+1} = edge(i, weights(j));
+      end
+  end
+
 
   total_edges = 0;
   for i = 1:no_of_nodes
@@ -61,10 +63,10 @@ function [h_graph_nodes, h_graph_mask, h_updating_graph_mask, h_graph_visited, h
   h_cost(source) = 0;
 
   % Save data to disk
-  save('h_graph_nodes.mat', 'h_graph_nodes');
-  save('h_graph_mask.mat', 'h_graph_mask');
-  save('h_updating_graph_mask.mat', 'h_updating_graph_mask');
-  save('h_graph_visited.mat', 'h_graph_visited');
-  save('h_cost.mat', 'h_cost');
-  save('h_graph_edges.mat', 'h_graph_edges');
+  %save('h_graph_nodes.mat', 'h_graph_nodes');
+  %save('h_graph_mask.mat', 'h_graph_mask');
+  %save('h_updating_graph_mask.mat', 'h_updating_graph_mask');
+  %save('h_graph_visited.mat', 'h_graph_visited');
+  %save('h_cost.mat', 'h_cost');
+  %save('h_graph_edges.mat', 'h_graph_edges');
 end

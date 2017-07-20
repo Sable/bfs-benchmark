@@ -7,12 +7,15 @@
     "input-size":{
         "small": 3000,
         "medium": 3000000,
-        "large": 15000000 
+        "large": 12000000 
     },
     "expected-output": {
         "small": 13234,
         "medium": 26321966,
-        "large": 139771334
+        "large": 116244974
     },
-    "dwarf": "graph traversal"
+    "dwarf": "graph traversal",
+    "dependencies": [
+        "https://github.com/Sable/ostrich-gpp-compiler.git"
+    ]
 }

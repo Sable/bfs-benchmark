@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+var wu = require('wu-wei-benchmarking-toolkit')
+var path = require('path')
+var shelljs = require('shelljs')
+var fs = require('fs')
+
+function filePathExists (path) {
+  try {
+    fs.accessSync(path)
+    return true
+  } catch (err) {}
+  return false
+}
+
+wu.build({
+  benchmarks: ['bfs'],
+  compilers: ['g++'],
+  implementations: ['cpp']
+}, function (err, configs) {
+  if (err) {
+    console.log('Error while building BFS\'s cpp implementation using wu-wei:')
+    console.error(err)
+    process.exit(1)
+  }
+
+  var config = configs[0]
+  var runner = path.join(config.location, config.compiler['runner-name'])
+
+  var inputSizes = config.benchmark['input-size']
+  for (var k in inputSizes) {
+    var size = inputSizes[k]
+    var verticeFile = './input/' + size + '-vertices.csv'
+    var edgeFile = './input/' + size + '-edges.csv'
+
+    // Skip if the files already exist
+    if (filePathExists(verticeFile) && filePathExists(edgeFile)) {
+      continue
+    }
+
+    console.log('Generating input for size ' + k + ': ' + verticeFile + ' and ' + edgeFile)
+    var args = [size, verticeFile, edgeFile]
+    shelljs.exec([runner].concat(args).join(' '))
+  }
+
+  console.log('bfs benchmark ready')
+})

@@ -1,12 +1,13 @@
-function runner(no_of_nodes)
+function runner(no_of_nodes, input_directory)
 % Example: runner(3000);
     expected_no_of_nodes = 3000000;
     expected_total_cost = 26321966;
 
     fprintf(2, 'Initializing graph\n');
-    input_nodes_file_path = fullfile(cd, '../data/', strcat('input-data-', num2str(no_of_nodes), '-nodes.csv'));
-    input_edges_file_path = fullfile(cd, '../data/', strcat('input-data-', num2str(no_of_nodes), '-edges.csv'));
+    input_nodes_file_path = fullfile(input_directory, strcat(num2str(no_of_nodes), '-vertices.csv'));
+    input_edges_file_path = fullfile(input_directory, strcat(num2str(no_of_nodes), '-edges.csv'));
     if exist(input_nodes_file_path) && exist(input_edges_file_path)
+        fprintf(2, 'Loading values from files\n');
         h_graph_nodes = csvread(input_nodes_file_path);  
         % Adjusting node ids to follow 1-based indexing in MATLAB
         h_graph_nodes(:,1) = h_graph_nodes(:,1) + 1;
@@ -15,7 +16,7 @@ function runner(no_of_nodes)
         h_graph_visited = zeros(no_of_nodes, 1);
 
         h_graph_edges = csvread(input_edges_file_path);
-        % Adjusting node ids to follow 1-based indexing in MATLAB
+        %% Adjusting node ids to follow 1-based indexing in MATLAB
         h_graph_edges = h_graph_edges + 1;
 
         h_cost = zeros(no_of_nodes, 1);
@@ -24,6 +25,7 @@ function runner(no_of_nodes)
         h_graph_mask(1) = 1;
         h_graph_visited(1) = 1;
     else
+        fprintf(2, 'Generating values\n');
         [h_graph_nodes, h_graph_mask, h_updating_graph_mask, h_graph_visited, h_cost, h_graph_edges] = InitializeGraph(no_of_nodes);
     end
 
@@ -37,19 +39,19 @@ function runner(no_of_nodes)
         total_cost = total_cost + h_cost(i);
     end
 
-    if no_of_nodes == expected_no_of_nodes
-        if total_cost ~= expected_total_cost
-            fprintf(2, 'Wrong total cost %d expected %d', total_cost, expected_total_cost);
-            disp('Error: wrong total cost');
-        end
-    else 
-        output_cost_file_path = fullfile(cd, '../data/', strcat('output-data-', num2str(no_of_nodes), '.csv'));
-        expected_costs = csvread(output_cost_file_path);
-        if h_cost ~= expected_costs
-            fprintf(2, 'Computed costs differ from expected costs\n');
-        end
-    end
+    %if no_of_nodes == expected_no_of_nodes
+    %    if total_cost ~= expected_total_cost
+    %        fprintf(2, 'Wrong total cost %d expected %d', total_cost, expected_total_cost);
+    %        disp('Error: wrong total cost');
+    %    end
+    %else 
+    %    output_cost_file_path = fullfile(cd, '../data/', strcat('output-data-', num2str(no_of_nodes), '.csv'));
+    %    expected_costs = csvread(output_cost_file_path);
+    %    if h_cost ~= expected_costs
+    %        fprintf(2, 'Computed costs differ from expected costs\n');
+    %    end
+    %end
 
-    fprintf(1, '{ "status": 1, "options": null, "time": %f }\n', traversal_time);
+    fprintf(1, '{ "status": 1, "options": null, "time": %f, "output": %f }\n', traversal_time, total_cost);
 end
 

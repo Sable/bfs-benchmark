@@ -39,7 +39,7 @@ struct edge {
 void InitializeGraph(Node**, bool**, bool**, bool**, int**, int**, int, char*, char*);
 
 void Usage(char**argv) {
-    fprintf(stdout,"Usage: %s <num_nodes> [<vertices_file_path> <edges_file_path> <cost_file_path>]\n", argv[0]);
+    fprintf(stdout,"Usage: %s <num_nodes>\n", argv[0]);
 }
 
 void InitializeGraph(
@@ -109,6 +109,21 @@ void InitializeGraph(
         (*h_cost)[i] = -1;
     }
     (*h_cost)[source] = 0;
+
+
+    if (vertice_file_path != NULL && edge_file_path != NULL) {
+		FILE *fp = fopen(vertice_file_path, "w");
+		for (int i=0; i<numNodes; ++i) {
+			fprintf(fp, "%d,%d\n", (*h_graph_nodes)[i].starting, (*h_graph_nodes)[i].no_of_edges);
+		}
+		fclose(fp);
+
+		fp = fopen(edge_file_path, "w");
+		for (int i=0; i<totalEdges; ++i) {
+			fprintf(fp, "%d\n", (*h_graph_edges)[i]);
+		}
+		fclose(fp);
+    }
 }
 
 
@@ -127,11 +142,10 @@ int main( int argc, char** argv) {
         no_of_nodes = atoi(argv[1]);
         fprintf(stderr, "Using %d nodes\n", no_of_nodes);
     }
-    else if (argc == 5) {
+    else if (argc == 4) {
         no_of_nodes = atoi(argv[1]);
         vertice_file_path = argv[2];
         edge_file_path = argv[3];
-        cost_file_path = argv[4];
         fprintf(stderr, "Using %d nodes and saving inputs and output in files:\n%s\n%s\n%s\n", no_of_nodes, vertice_file_path, edge_file_path, cost_file_path);
     }
     else {
