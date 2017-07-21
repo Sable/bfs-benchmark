@@ -1,6 +1,6 @@
 {
   "name": "bfs-benchmark",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Breadth-First Search",
   "main": "install",
   "scripts": {
@@ -18,6 +18,6 @@
   "homepage": "https://github.com/Sable/bfs-benchmark#readme",
   "dependencies": {
     "shelljs": "^0.7.8",
-    "wu-wei-benchmarking-toolkit": "^0.2.0"
+    "wu-wei-benchmarking-toolkit": "^0.2.1"
   }
 }
