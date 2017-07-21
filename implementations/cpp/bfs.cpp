@@ -216,16 +216,6 @@ int main( int argc, char** argv) {
         total_cost += h_cost[i];
     }
 
-
-    if (no_of_nodes == expected_no_of_nodes) {
-        if (total_cost != expected_total_cost) {
-          fprintf(stdout, "ERROR: the total cost obtained for '%d' nodes  is '%lu' while the expected cost is '%lu'\n", no_of_nodes, total_cost, expected_total_cost);
-            exit(1);
-        }
-    } else {
-        fprintf(stderr, "WARNING: no self-checking step for '%u' nodes, only valid for '%u' nodes\n", no_of_nodes, expected_no_of_nodes);
-    }
-
     fprintf(stderr, "// Init time     : %f s\n", get_interval_by_sec(&sw2));
 
     if (cost_file_path != NULL) {
