@@ -12,7 +12,7 @@ Note: This application was ported from the Rodinia Suite
 
 # Installation
 
-During installation, the 'install' script uses Wu-Wei to compile the C++
+During installation, the [install](./install) script uses Wu-Wei to compile the C++
 implementation, and pregenerate inputs to speedup the execution of the Matlab
 implementation. This is not strictly necessary to execute the Matlab version
 but failure to do so can make its execution incredibly slow since the
