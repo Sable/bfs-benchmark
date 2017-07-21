@@ -29,9 +29,9 @@ the input data by following these steps.
 
 # Notes
 
-The C++ and Matlab implementations have been tested for the small, medium, and large sizes and run in a reasonable time. The JavaScript implementation has been tested on the small, and medium sizes and the initialization of the benchmark taskes a significant amount of time. We ran out of patience before obtaining results for the large size for JavaScript.
+The C++ and Matlab implementations have been tested for the small, medium, and large sizes and run in a reasonable time. The JavaScript implementation has been tested on the small, and medium sizes and the initialization of the benchmark taskes a significant amount of time. It took too long to run in JavaScript so it was never tested to run to completion as it triggers the "unresponsive script" on browsers. Moreover it may generate too much memory to handle in memory during generation and loading the data from a file was too complicated to handle.
 
-The benchmark has been tested on the following configurations:
+The benchmark has been tested on the following configurations on a MacBook Air 2011 running OSX 10.11.6:
 
 | implementation | compiler      | environment | input-size | mean      | std     | min       | max       | repetitions |
 | -------------- | ------------- | ----------- | ---------- | --------- | ------- | --------- | --------- | ----------- |
