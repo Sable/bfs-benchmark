@@ -16,7 +16,9 @@ During installation, the [install](./install) script uses Wu-Wei to compile the 
 implementation, and pregenerate inputs to speedup the execution of the Matlab
 implementation. This is not strictly necessary to execute the Matlab version
 but failure to do so can make its execution incredibly slow since the
-generation of the data is really slow itself.
+generation of the data is really slow itself. Several hundreds of megabytes are 
+saved on disk in the [input directory](./input). If you know you won't use the Matlab implementation, 
+you can safely delete the generated files.
 
 Should the installation script fails for any reason, you can manually generate
 the input data by following these steps.
@@ -25,7 +27,7 @@ the input data by following these steps.
   ````wu build bfs cpp -v````
   The output should be something similar to ````result saved in /.../builds/33c2d...````.
    2. Run the compiled implementation with two extra arguments to save the generated input in the corresponding files for all input sizes defined in benchmark.json:
-  ````/.../builds/33c2d.../runner $BENCHMARK_INPUT_SIZE ./input/$BENMARK_INPUT_SIZE'-vertices.csv' ./input/$BENMARK_INPUT_SIZE'-edges.csv'````
+  ````/.../builds/33c2d.../runner $BENCHMARK_INPUT_SIZE ./input/$BENMARK_INPUT_SIZE'-vertices.csv' ./input/$BENMARK_INPUT_SIZE'-edges.csv'````  
 
 # Notes
 
